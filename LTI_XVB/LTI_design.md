@@ -243,6 +243,53 @@ UC6 --> UC7 : «extend»
 
 ---
 
+## Diagrama C4
 
+Caso de uso "pulbicar nueva oferta de empleo"
+
+@startuml C4_PublicarOferta
+!include <C4/C4_Container>
+
+Person(recruiter, "Recruiter (HR)", "Usuario del departamento de RRHH que crea y publica ofertas")
+System_Ext(job_borad, "Job Board", "Sistema externo donde se publica la oferta")
+System(ats, "ATS LTI", "Sistema de seguimiento de candidatos")
+
+Container(ats_web, "Web App ATS", "Web UI", "Permite crear y gestionar ofertas")
+Container(ats_api, "API ATS", "REST API", "Expone servicios para publicación e integración")
+Container(db, "Base de datos ATS", "Relacional", "Almacena datos de ofertas, usuarios, pipelines")
+
+Rel(recruiter, ats_web, "Usa para crear/editar oferta")
+Rel(ats_web, ats_api, "Llama API para guardar oferta")
+Rel(ats_api, db, "Lee/Escribe registros de oferta")
+Rel(ats_api, job_borad, "Publica oferta")
+
+Rel(recruiter, job_borad, "Ve oferta publicada")
+
+@enduml
+
+@startuml C4_Components_PublicarOferta
+!include <C4/C4_Container>
+!include <C4/C4_Component>
+
+LAYOUT_WITH_LEGEND()
+
+' Containers de context
+Person(recruiter, "Recruiter", "Usuari RH que publica una oferta")
+System_Ext(job_board, "Job Board", "Portal extern on es publica l'oferta")
+System_Boundary(ats_api, "ATS API") {
+
+  Component(OfertaController, "OfertaController", "REST Controller", "Exposa endpoints per crear i publicar ofertes")
+  Component(OfertaService, "OfertaService", "Aplicació", "Conté la lògica per validar i gestionar les ofertes")
+  Component(PublicadorJobBoard, "PublicadorJobBoard", "Connector", "Connecta amb plataformes externes per publicar ofertes")
+  Component(OfertaRepository, "OfertaRepository", "Accés a dades", "Accedeix a la base de dades per persistir ofertes")
+}
+
+Rel(recruiter, OfertaController, "Fes petició HTTP POST")
+Rel(OfertaController, OfertaService, "Crida")
+Rel(OfertaService, OfertaRepository, "Guarda oferta")
+Rel(OfertaService, PublicadorJobBoard, "Publica en canal extern")
+Rel(PublicadorJobBoard, job_board, "Envia oferta publicada via API")
+
+@enduml
 
 

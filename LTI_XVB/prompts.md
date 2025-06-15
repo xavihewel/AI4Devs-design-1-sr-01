@@ -1,3 +1,11 @@
+# Prompts
+
+He usado GatGPT 4o durante todo el proceso
+
+Aquí está el enlace: https://chatgpt.com/share/684eee26-cf68-8001-88d2-f460a65f705d
+
+## Descripción breve del softsare LTI, valor añadido y ventajas competitivas.
+
 Eres un experto en producto, con experiencia en sistemas ATS (Applicant Tracking Systems). Enumera y explica brevemente cuales son las funcionalidades básicas que tiene un ATS.
 
 Claro, aquí tienes una enumeración con una breve explicación de las **funcionalidades básicas que debe tener un sistema ATS (Applicant Tracking System)**:
@@ -80,6 +88,8 @@ Aquí tienes una **comparativa actualizada** entre los ATS más populares en 202
 [6]: https://www.techradar.com/best/recruitment-platforms?utm_source=chatgpt.com "Best recruitment platform of 2025"
 [7]: https://www.outsail.co/post/teamtailor-reviews---pricing-pros-cons-and-user-feedback?utm_source=chatgpt.com "Teamtailor Reviews – Pricing, Pros/Cons, and User Feedback"
 
+## Explicación de las funciones principales
+
 queremos crear un ATS con funcionalidades clave que harán brillar a LTI por encima de los competidores: aumentar la eficiencia para los departamentos de HR, mejorar la colaboración en tiempo real entre reclutadores y managers, automatizaciones, asistencia de IA en diversas tareas... Investiga las funcionalidades de nuestros principales competidores (páginas web, documentación y opiniones de usuarios) y proporciona ideas 
 
 Aquí tienes un análisis de las **funcionalidades clave de los competidores** y algunas **ideas para diferenciar el ATS de LTI**:
@@ -146,6 +156,8 @@ Si te interesa, puedo ayudarte a estructurar un roadmap modular, priorizando fun
 [6]: https://www.workable.com/features?utm_source=chatgpt.com "Workable features | Complete HR and hiring platform"
 
 
+## Añadir un diagrama Lean Canvas para entender el modelo de negocio
+
 Prepara una descripción breve del software LTI, valor añadido y ventajas competitivas. Explicación de las funciones principales. Añade un diagrama Lean Canvas para entender el modelo de negocio
 
 ## 🟦 Descripción Breve del Software LTI
@@ -193,6 +205,8 @@ Prepara una descripción breve del software LTI, valor añadido y ventajas compe
 | **Métricas clau**        | Tiempo medio de contratación, tasa de conversión, tasa de abandono, NPS interno (reclutadores/managers), activación de automatismos.             |
 | **Ventaja competitiva**  | IA integrada + interfaz colaborativa + cumplimiento legal automático + onboarding conectado.                                                     |
 
+
+## Descripción de los 3 casos de uso principales, con el diagrama asociado a cada uno.
 
 Ahora eres un analista de software experto. Enumera y describe los tres casos de uso más importantes a implementar para lograr una funcionalidad básica
 
@@ -314,6 +328,7 @@ UC6 --> UC7 : «extend»
 
 ¿Quieres que lo exporte como `.puml`, `.png` o generar más diagramas UML como clases, componentes o secuencia?
 
+##  Modelo de datos que cubra entidades, atributos (nombre y tipo) y relaciones.
 
 Eres un brillante arquitecto de software. Eres capaz de diseñar, explicar y diagramar los diferentes aspectos de un sistema de software. 
 
@@ -469,3 +484,164 @@ Perfecto. En un ATS (Applicant Tracking System) como **LTI**, las entidades clav
 ¿Quieres que te prepare un diagrama ER (Entidad-Relación) en formato PlantUML o quieres trabajar con un modelo más orientado a objetos (UML de clases)?
 
 
+## Diseño del sistema a alto nivel, tanto explicado como diagrama adjunto.
+
+A microservices architecture for an ATS system based on these user stories:
+
+@startuml
+title Main Use Cases - ATS LTI
+
+' Actor definition
+actor "HR User" as HR
+actor "Candidate" as Candidate
+
+' ATS System
+rectangle "ATS LTI System" {
+
+  ' Use cases for HR User
+  usecase "Create job offer" as UC1
+  usecase "Publish offer on job boards" as UC2
+  usecase "Screen and score candidates" as UC3
+  usecase "Schedule interviews" as UC4
+  usecase "Evaluate interviews" as UC5
+
+  ' Use cases for Candidate
+  usecase "Apply for a job offer" as UC6
+  usecase "Receive notifications and appointments" as UC7
+}
+
+' Actor-use case relationships
+HR --> UC1
+HR --> UC2
+HR --> UC3
+HR --> UC4
+HR --> UC5
+
+Candidate --> UC6
+Candidate --> UC7
+
+' Use case relationships
+UC1 --> UC2 : «include»
+UC3 --> UC5 : «include»
+UC4 --> UC5 : «extend»
+UC6 --> UC7 : «extend»
+
+@enduml
+
+All MS uses de same database.
+Also has a frontend tant communicates throwugh API Gateway.
+Cloud provider is AWS, use proper services
+Include load balancing and CDN
+Use Custom OAuth2 implementation for authentication and authorization
+Use AWS SQS for asynchronous communication between microservices
+Use Email notifications and Push notifications
+
+
+## Diagrama C4
+
+estudia esta documentación https://lukemerrett.com/c4-diagrams-as-code-architectural-joy/ y construye un diagrama C4 del caso de uso "publicar una oferta de trabajo"
+
+Aquí tienes un diagrama **C4 – Nivel 2 (Container)** centrado en el caso de uso **"Publicar una oferta de trabajo"** dentro del sistema ATS LTI, siguiendo la guía de Luke Merrett y el modelo C4 ([lukemerrett.com][1]):
+
+---
+
+```plantuml
+@startuml C4_PublicarOferta
+!include <C4/C4_Container>
+
+Person(recruiter, "Recruiter (HR)", "Usuario del departamento de RRHH que crea y publica ofertas")
+System_Ext(job_borad, "Job Board", "Sistema externo donde se publica la oferta")
+System(ats, "ATS LTI", "Sistema de seguimiento de candidatos")
+
+Container(ats_web, "Web App ATS", "Web UI", "Permite crear y gestionar ofertas")
+Container(ats_api, "API ATS", "REST API", "Expone servicios para publicación e integración")
+Container(db, "Base de datos ATS", "Relacional", "Almacena datos de ofertas, usuarios, pipelines")
+
+Rel(recruiter, ats_web, "Usa para crear/editar oferta")
+Rel(ats_web, ats_api, "Llama API para guardar oferta")
+Rel(ats_api, db, "Lee/Escribe registros de oferta")
+Rel(ats_api, job_borad, "Publica oferta")
+
+Rel(recruiter, job_borad, "Ve oferta publicada")
+
+@enduml
+```
+
+---
+
+### 🧭 Explicación del diagrama
+
+* **Actors & Systems**
+
+  * **Recruiter**: actor que inicia la creación y publicación.
+  * **Job Board**: sistema externo receptor de la oferta.
+  * **ATS LTI**: sistema principal.
+
+* **Containers**
+
+  * **Web App ATS**: interfaz web para que el recruiter gestione ofertas.
+  * **API ATS**: expone endpoints REST para operaciones de oferta y mensajería con terceros.
+  * **DB ATS**: almacena los datos relacionados como ofertas, usuarios y estado.
+
+* **Flujo de interacción**
+
+  1. El recruiter crea o edita una oferta desde la web.
+  2. La Web App envía los datos al API.
+  3. El API valida y persiste los datos en la DB.
+  4. Tras publicación, el API envía la oferta al Job Board.
+  5. El recruiter visualiza la publicación externa.
+
+Este diagrama ayuda a visualizar claramente los componentes involucrados y cómo se comunican para cumplir este caso de uso específico. Si quieres que avance al nivel de **Componentes (C3)** o **Código (C4)**, solo dímelo.
+
+[1]: https://lukemerrett.com/c4-diagrams-as-code-architectural-joy/?utm_source=chatgpt.com "C4, Diagrams as Code & Architectural Joy - Luke Merrett"
+
+
+avanza al nivel de componentes (C3)
+
+Perfecte. Ara baixem al **nivell C3 (Components)** del model C4, centrant-nos en el cas d’ús **“Publicar una oferta de treball”**, dins del container **API ATS**. Aquí mostrem com aquest container es divideix internament en components lògics, incloent serveis, controladors, i connectors.
+
+---
+
+### 📦 Diagrama C4 – Nivell 3 (Components) – `ATS API`
+
+```plantuml
+@startuml C4_Components_PublicarOferta
+!include <C4/C4_Container>
+!include <C4/C4_Component>
+
+LAYOUT_WITH_LEGEND()
+
+' Containers de context
+Person(recruiter, "Recruiter", "Usuari RH que publica una oferta")
+System_Ext(job_board, "Job Board", "Portal extern on es publica l'oferta")
+System_Boundary(ats_api, "ATS API") {
+
+  Component(OfertaController, "OfertaController", "REST Controller", "Exposa endpoints per crear i publicar ofertes")
+  Component(OfertaService, "OfertaService", "Aplicació", "Conté la lògica per validar i gestionar les ofertes")
+  Component(PublicadorJobBoard, "PublicadorJobBoard", "Connector", "Connecta amb plataformes externes per publicar ofertes")
+  Component(OfertaRepository, "OfertaRepository", "Accés a dades", "Accedeix a la base de dades per persistir ofertes")
+}
+
+Rel(recruiter, OfertaController, "Fes petició HTTP POST")
+Rel(OfertaController, OfertaService, "Crida")
+Rel(OfertaService, OfertaRepository, "Guarda oferta")
+Rel(OfertaService, PublicadorJobBoard, "Publica en canal extern")
+Rel(PublicadorJobBoard, job_board, "Envia oferta publicada via API")
+
+@enduml
+```
+
+---
+
+### 🧩 Components detallats
+
+| Component            | Funció                                                                                 |
+| -------------------- | -------------------------------------------------------------------------------------- |
+| `OfertaController`   | Rep la petició del recruiter (via Web App), valida el request bàsic.                   |
+| `OfertaService`      | Conté la lògica de negoci per validar l’oferta, crear registres i decidir on publicar. |
+| `OfertaRepository`   | Fa persistència en la base de dades (JPA, SQL, etc).                                   |
+| `PublicadorJobBoard` | S'encarrega d'enviar l'oferta a portals com InfoJobs, LinkedIn, etc.                   |
+
+---
+
+Vols que et generi el `.puml` d’aquest nivell també per baixar-lo, o continuem amb el **nivell C1 (sistema)** o fins i tot una visió de **deploy (C4)**?
