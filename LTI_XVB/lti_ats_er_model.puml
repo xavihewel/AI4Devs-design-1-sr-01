@@ -1,0 +1,81 @@
+
+@startuml
+!define table(x) class x << (T,#FFAAAA) >>
+!define primaryKey(field) <u>field</u>
+
+title Diagrama ER - ATS LTI
+
+table(Usuario) {
+  primaryKey(id)
+  nombre
+  email
+  rol
+  departamento
+}
+
+table(OfertaDeEmpleo) {
+  primaryKey(id)
+  titulo
+  descripcion
+  departamento
+  ubicacion
+  fechaPublicacion
+  estado
+  creadaPor
+}
+
+table(Candidato) {
+  primaryKey(id)
+  nombre
+  email
+  telefono
+  linkedin
+  cvUrl
+  fechaRegistro
+}
+
+table(Candidatura) {
+  primaryKey(id)
+  idCandidato
+  idOferta
+  fechaAplicacion
+  estadoProceso
+  scoreIA
+  feedback
+}
+
+table(Entrevista) {
+  primaryKey(id)
+  idCandidatura
+  fecha
+  tipo
+  urlMeet
+  entrevistadorId
+}
+
+table(Evaluacion) {
+  primaryKey(id)
+  idCandidatura
+  usuarioId
+  score
+  comentarios
+  fecha
+}
+
+table(Workflow) {
+  primaryKey(id)
+  nombre
+  etapas
+}
+
+' Relaciones
+Usuario ||--o{ OfertaDeEmpleo : crea
+Usuario ||--o{ Evaluacion : emite
+Usuario ||--o{ Entrevista : participa
+OfertaDeEmpleo ||--o{ Candidatura : recibe
+Candidato ||--o{ Candidatura : aplica
+Candidatura ||--o{ Entrevista : incluye
+Candidatura ||--o{ Evaluacion : genera
+OfertaDeEmpleo }o--|| Workflow : usa
+
+@enduml
